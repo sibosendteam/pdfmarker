@@ -245,8 +245,14 @@ func resize(mw *imagick.MagickWand, scale float64) error {
 	// Resize the image using the Lanczos filter
 	// The blur factor is a float, where > 1 is blurry, < 1 is sharp
 	mw.ResetIterator()
-	for mw.HasNextImage() {
-		mw.NextImage()
+	if mw.HasNextImage() {
+		for mw.HasNextImage() {
+			mw.NextImage()
+			if err := mw.ResizeImage(sWidth, sHeight, imagick.FILTER_LANCZOS, 1); err != nil {
+				return err
+			}
+		}
+	} else {
 		if err := mw.ResizeImage(sWidth, sHeight, imagick.FILTER_LANCZOS, 1); err != nil {
 			return err
 		}
